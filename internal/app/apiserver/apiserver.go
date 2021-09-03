@@ -59,7 +59,8 @@ func (s *APIserver) configureRouter() {
 }
 
 func (s *APIserver) configureStore() error {
-	st := s.store.New(s.config.Store)
+
+	st := store.New(s.config.Store)
 	if err := st.Open(); err != nil {
 		return err
 	}

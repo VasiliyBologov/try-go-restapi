@@ -12,13 +12,14 @@ import (
 
 // Store ... DB
 type Store struct {
-	config     *Config
-	logger     *logrus.Logger
-	db_context context.Context
-	db_client  *mongo.Client
+	config          *Config
+	logger          *logrus.Logger
+	db_context      context.Context
+	db_client       *mongo.Client
+	user_collection *UserCollection
 }
 
-//new ...
+//New ...
 func New(config *Config) *Store {
 	return &Store{
 		config: config,
@@ -57,7 +58,21 @@ func (s *Store) Open() error {
 	return nil
 }
 
-// Close
+// Close ...
 func (s *Store) Close() {
 	defer s.db_client.Disconnect(s.db_context)
+}
+
+// User ...
+func (s *Store) User() *UserCollection {
+	if s.user_collection != nil {
+		return s.user_collection
+	}
+
+	s.user_collection = &UserCollection{
+		store:      s,
+		collection: s.db_client.Database("tryGo").Collection("users"),
+	}
+
+	return s.user_collection
 }
