@@ -1,17 +1,18 @@
 package apiserver
 
-import(
-	"net/http"
+import (
 	"io"
+	"net/http"
+
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
 )
 
 // API server ...
-type APIserver struct{
+type APIserver struct {
 	config *Config
-	logger * logrus.Logger
-	router * mux.Router
+	logger *logrus.Logger
+	router *mux.Router
 }
 
 func New(config *Config) *APIserver {
@@ -36,7 +37,7 @@ func (s *APIserver) Start() error {
 	return http.ListenAndServe(s.config.BindAddr, s.router)
 }
 
-func (s *APIserver) configureLogger () error {
+func (s *APIserver) configureLogger() error {
 	level, err := logrus.ParseLevel(s.config.LogLevel)
 	if err != nil {
 		return err
@@ -47,13 +48,13 @@ func (s *APIserver) configureLogger () error {
 	return nil
 }
 
-
 func (s *APIserver) configureRouter() {
-	s.router.HandleFunc("/hello", s.handleHello())	
+	s.router.HandleFunc("/hello", s.handleHello())
 }
 
 func (s *APIserver) handleHello() http.HandlerFunc {
-	return func (w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		s.logger.Info("Hello world endpoint is runing")
 		io.WriteString(w, "Hello world from Go lang")
 	}
 }
